@@ -1,0 +1,162 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    app.kubernetes.io/instance: weaviate
+  name: weaviate
+  namespace: dify
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  labels:
+    app.kubernetes.io/instance: weaviate
+  name: weaviate
+  namespace: dify
+rules:
+- apiGroups:
+  - "*"
+  resources:
+  - "*"
+  verbs:
+  - "*"
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/instance: weaviate
+  name: weaviate
+  namespace: dify
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: weaviate
+subjects:
+- kind: ServiceAccount
+  name: weaviate
+
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: weaviate
+  namespace: dify
+spec:
+  selector:
+    matchLabels:
+      app: weaviate
+  serviceName: weaviate
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: weaviate
+    spec:
+      terminationGracePeriodSeconds: 10
+      nodeSelector:
+        kubernetes.io/os: linux
+      serviceAccountName: weaviate
+      containers:
+        - name: weaviate
+          image: semitechnologies/weaviate:1.19.0
+          ports:
+            - containerPort: 8080
+              name: weaviate-p
+          resources:
+            limits:
+              cpu: 500m
+              memory: 1024Mi
+            requests:
+              cpu: 100m
+              memory: 102Mi
+          env:
+          - name: PERSISTENCE_DATA_PATH
+            valueFrom:
+              configMapKeyRef:
+                name: dify-config
+                key: WEAVIATE_PERSISTENCE_DATA_PATH
+          - name: QUERY_DEFAULTS_LIMIT
+            valueFrom:
+              configMapKeyRef:
+                name: dify-config
+                key: WEAVIATE_QUERY_DEFAULTS_LIMIT
+          - name: AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED
+            valueFrom:
+              configMapKeyRef:
+                name: dify-config
+                key: WEAVIATE_AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED
+          - name: DEFAULT_VECTORIZER_MODULE
+            valueFrom:
+              configMapKeyRef:
+                name: dify-config
+                key: WEAVIATE_DEFAULT_VECTORIZER_MODULE
+          - name: CLUSTER_HOSTNAME
+            valueFrom:
+              configMapKeyRef:
+                name: dify-config
+                key: WEAVIATE_CLUSTER_HOSTNAME
+          - name: AUTHENTICATION_APIKEY_ENABLED
+            valueFrom:
+              configMapKeyRef:
+                name: dify-config
+                key: WEAVIATE_AUTHENTICATION_APIKEY_ENABLED
+          - name: AUTHENTICATION_APIKEY_ALLOWED_KEYS
+            valueFrom:
+              configMapKeyRef:
+                name: dify-config
+                key: WEAVIATE_AUTHENTICATION_APIKEY_ALLOWED_KEYS
+          - name: AUTHENTICATION_APIKEY_USERS
+            valueFrom:
+              configMapKeyRef:
+                name: dify-config
+                key: WEAVIATE_AUTHENTICATION_APIKEY_USERS
+          - name: AUTHORIZATION_ADMINLIST_ENABLED
+            valueFrom:
+              configMapKeyRef:
+                name: dify-config
+                key: WEAVIATE_AUTHORIZATION_ADMINLIST_ENABLED
+          - name: AUTHORIZATION_ADMINLIST_USERS
+            valueFrom:
+              configMapKeyRef:
+                name: dify-config
+                key: WEAVIATE_AUTHORIZATION_ADMINLIST_USERS
+          volumeMounts:
+            - mountPath: /var/lib/weaviate
+              name: weaviate-data
+      volumes:
+        - name: weaviate-data
+          persistentVolumeClaim:
+            claimName: weaviate-pvc
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: weaviate-pvc
+  namespace: dify
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: weaviate
+  namespace: dify
+spec:
+  selector:
+    app: weaviate
+  type: ClusterIP
+  clusterIP: None
+  ports:
+  - name: weaviate
+    protocol: TCP
+    port: 8080
+    targetPort: 8080
+
+---

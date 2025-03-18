@@ -513,14 +513,6 @@ spec:
             timeoutSeconds: 2
             successThreshold: 1
             failureThreshold: 10
-          resources:
-            limits:
-              cpu: 500m
-              memory: 1Gi
-            requests:
-              cpu: 100m
-              memory: 128Mi
-
           volumeMounts:
             - mountPath: /var/lib/postgresql/data
               name: db-data
@@ -539,7 +531,7 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 100Gi
+      storage: 10Gi
 ---
 apiVersion: v1
 kind: Service
@@ -656,7 +648,7 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 100Gi
+      storage: 10Gi
 ---
 apiVersion: v1
 kind: Service
@@ -817,7 +809,7 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 100Gi
+      storage: 10Gi
 ---
 apiVersion: v1
 kind: Service
@@ -1194,9 +1186,6 @@ spec:
             name: ssrf-proxy-cm0
           name: ssrf-proxy-cm0
         - configMap:
-#            items:
-#              - key: docker-entrypoint.sh
-#                path: docker-entrypoint-mount.sh
             name: ssrf-proxy-cm1
           name: ssrf-proxy-cm1
       restartPolicy: Always
@@ -1302,7 +1291,7 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 10Gi
+      storage: 5Gi
 ---
 apiVersion: v1
 kind: Service
@@ -1804,7 +1793,7 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 500Mi
+      storage: 100Mi
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -1818,7 +1807,7 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 500Mi
+      storage: 100Mi
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -1832,7 +1821,7 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 500Mi
+      storage: 100Mi
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -1977,5 +1966,5 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 10Gi
+      storage: 5Gi
 ---

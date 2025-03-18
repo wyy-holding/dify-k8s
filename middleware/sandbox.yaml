@@ -1,0 +1,169 @@
+apiVersion: v1
+data:
+  python-requirements.txt: ""
+kind: ConfigMap
+metadata:
+  labels:
+    io.kompose.service: sandbox
+  name: sandbox-cm0
+  namespace: dify
+---
+apiVersion: v1
+data:
+  config.yaml: |
+    app:
+      port: 8194
+      debug: True
+      key: sandbox
+    max_workers: 4
+    max_requests: 50
+    worker_timeout: 5
+    python_path: /usr/local/bin/python3
+    enable_network: True # please make sure there is no network risk in your environment
+    allowed_syscalls: # please leave it empty if you have no idea how seccomp works
+    proxy:
+      socks5: ''
+      http: ''
+      https: ''
+  config.yaml.example: |
+    app:
+      port: 8194
+      debug: True
+      key: sandbox
+    max_workers: 4
+    max_requests: 50
+    worker_timeout: 5
+    python_path: /usr/local/bin/python3
+    python_lib_path:
+      - /usr/local/lib/python3.10
+      - /usr/lib/python3.10
+      - /usr/lib/python3
+      - /usr/lib/x86_64-linux-gnu
+      - /etc/ssl/certs/ca-certificates.crt
+      - /etc/nsswitch.conf
+      - /etc/hosts
+      - /etc/resolv.conf
+      - /run/systemd/resolve/stub-resolv.conf
+      - /run/resolvconf/resolv.conf
+      - /etc/localtime
+      - /usr/share/zoneinfo
+      - /etc/timezone
+      # add more paths if needed
+    python_pip_mirror_url: https://pypi.tuna.tsinghua.edu.cn/simple
+    nodejs_path: /usr/local/bin/node
+    enable_network: True
+    allowed_syscalls:
+      - 1
+      - 2
+      - 3
+      # add all the syscalls which you require
+    proxy:
+      socks5: ''
+      http: ''
+      https: ''
+kind: ConfigMap
+metadata:
+  labels:
+    io.kompose.service: sandbox
+  name: sandbox-cm1
+  namespace: dify
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sandbox
+  namespace: dify
+  labels:
+    app: sandbox
+spec:
+  replicas: 1
+  revisionHistoryLimit: 1
+  selector:
+    matchLabels:
+      app: sandbox
+  template:
+    metadata:
+      labels:
+        app: sandbox
+    spec:
+      automountServiceAccountToken: false
+      nodeSelector:
+        kubernetes.io/os: linux
+      containers:
+      - name: sandbox
+        image: langgenius/dify-sandbox:0.2.10
+        env:
+          - name: API_KEY
+            valueFrom:
+              configMapKeyRef:
+                name: dify-config
+                key: SANDBOX_API_KEY
+          - name: GIN_MODE
+            valueFrom:
+              configMapKeyRef:
+                name: dify-config
+                key: SANDBOX_GIN_MODE
+          - name: WORKER_TIMEOUT
+            valueFrom:
+              configMapKeyRef:
+                name: dify-config
+                key: SANDBOX_WORKER_TIMEOUT
+          - name: ENABLE_NETWORK
+            valueFrom:
+              configMapKeyRef:
+                name: dify-config
+                key: SANDBOX_ENABLE_NETWORK
+          - name: HTTP_PROXY
+            valueFrom:
+              configMapKeyRef:
+                name: dify-config
+                key: SANDBOX_HTTP_PROXY
+          - name: HTTPS_PROXY
+            valueFrom:
+              configMapKeyRef:
+                name: dify-config
+                key: SANDBOX_HTTPS_PROXY
+          - name: SANDBOX_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: dify-config
+                key: SANDBOX_PORT
+        livenessProbe:
+          exec:
+            command:
+              - "curl"
+              - "-f"
+              - "http://localhost:8194/health"
+        ports:
+          - containerPort: 8194
+        imagePullPolicy: IfNotPresent
+        volumeMounts:
+          - mountPath: /dependencies
+            name: sandbox-cm0
+          - mountPath: /conf
+            name: sandbox-cm1
+      volumes:
+        - configMap:
+            name: sandbox-cm0
+          name: sandbox-cm0
+        - configMap:
+            name: sandbox-cm1
+          name: sandbox-cm1
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: sandbox
+  namespace: dify
+spec:
+  ports:
+  - port: 8194
+    targetPort: 8194
+    protocol: TCP
+    name: sandbox
+  type: ClusterIP
+  clusterIP: None
+  selector:
+    app: sandbox
+---

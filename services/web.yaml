@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+  namespace: dify
+spec:
+  replicas: 1
+  revisionHistoryLimit: 1
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      nodeSelector:
+        kubernetes.io/os: linux
+      automountServiceAccountToken: false
+      restartPolicy: Always
+      containers:
+      - name: web
+        image: langgenius/dify-web:1.0.1
+        envFrom:
+          - configMapRef:
+              name: dify-config
+        env:
+        - name: SENTRY_DSN
+          valueFrom:
+            configMapKeyRef:
+              name: dify-config
+              key: WEB_SENTRY_DSN
+        ports:
+        - containerPort: 3000
+        imagePullPolicy: IfNotPresent
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web
+  namespace: dify
+spec:
+  ports:
+  - port: 3000
+    targetPort: 3000
+    protocol: TCP
+    name: web
+  type: ClusterIP
+  selector:
+    app: web
+---

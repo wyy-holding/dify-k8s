@@ -1,0 +1,145 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: plugin-daemon
+  namespace: dify
+  labels:
+    app: plugin-daemon
+spec:
+  replicas: 1
+  revisionHistoryLimit: 1
+  selector:
+    matchLabels:
+      app: plugin-daemon
+  template:
+    metadata:
+      labels:
+        app: plugin-daemon
+    spec:
+      nodeSelector:
+        kubernetes.io/os: linux
+      automountServiceAccountToken: false
+      containers:
+        - name: plugin-daemon
+          image: langgenius/dify-plugin-daemon:0.0.4-local
+          envFrom:
+            - configMapRef:
+                name: dify-config
+          env:
+            - name: DB_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: DB_PLUGIN_DATABASE
+            - name: SERVER_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_DAEMON_PORT
+            - name: SERVER_KEY
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_DAEMON_KEY
+            - name: MAX_PLUGIN_PACKAGE_SIZE
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_MAX_PACKAGE_SIZE
+            - name: PPROF_ENABLED
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_PPROF_ENABLED
+            - name: DIFY_INNER_API_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_DIFY_INNER_API_URL
+            - name: DIFY_INNER_API_KEY
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_DIFY_INNER_API_KEY
+            - name: PLUGIN_REMOTE_INSTALLING_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_DEBUGGING_HOST
+            - name: PLUGIN_REMOTE_INSTALLING_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_DEBUGGING_PORT
+            - name: PLUGIN_WORKING_PATH
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_WORKING_PATH
+            - name: FORCE_VERIFYING_SIGNATURE
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: FORCE_VERIFYING_SIGNATURE
+            - name: PYTHON_ENV_INIT_TIMEOUT
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_PYTHON_ENV_INIT_TIMEOUT
+            - name: PLUGIN_MAX_EXECUTION_TIMEOUT
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_MAX_EXECUTION_TIMEOUT
+            - name: PIP_MIRROR_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PIP_MIRROR_URL
+
+          ports:
+            - containerPort: 5003
+              protocol: TCP
+              name: debug-port
+            - containerPort: 5002
+              protocol: TCP
+              name: service-port
+          volumeMounts:
+            - mountPath: /app/storage
+              name: plugin-daemon-storage
+      volumes:
+        - name: plugin-daemon-storage
+          persistentVolumeClaim:
+            claimName: plugin-daemon-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: plugin-daemon
+  namespace: dify
+spec:
+  type: ClusterIP
+  selector:
+    app: plugin-daemon
+  ports:
+  - port: 5003
+    targetPort: 5003
+    protocol: TCP
+    name: debug-port
+  - port: 5002
+    targetPort: 5002
+    protocol: TCP
+    name: service-port
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: plugin-daemon-pvc
+  namespace: dify
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+---
