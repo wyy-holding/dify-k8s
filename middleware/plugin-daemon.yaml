@@ -21,7 +21,7 @@ spec:
       automountServiceAccountToken: false
       containers:
         - name: plugin-daemon
-          image: langgenius/dify-plugin-daemon:0.0.4-local
+          image: langgenius/dify-plugin-daemon:0.0.5-local
           envFrom:
             - configMapRef:
                 name: dify-config
