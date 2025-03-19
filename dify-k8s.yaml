@@ -502,9 +502,30 @@ spec:
       containers:
         - name: postgres
           image: postgres:15-alpine
-          envFrom:
-          - configMapRef:
-              name: dify-config
+#          envFrom:
+#          - configMapRef:
+#              name: dify-config
+          env:
+            - name: PGUSER
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PGUSER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: POSTGRES_PASSWORD
+            - name: POSTGRES_DB
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: POSTGRES_DB
+            - name: PGDATA
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PGDATA
           ports:
             - containerPort: 5432
               name: postgres-port

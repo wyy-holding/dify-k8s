@@ -13,4 +13,4 @@
 
  - Modify the dify-k8s.yaml file
  - kubectl apply -f dify-k8s.yaml
- - kubectl rollout restart statefulset/deployment <name> -n dify
+ - kubectl rollout restart statefulset/deployment name -n dify
