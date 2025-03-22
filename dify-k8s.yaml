@@ -1257,7 +1257,7 @@ spec:
         kubernetes.io/os: linux
       containers:
         - name: api
-          image: langgenius/dify-api:1.1.0
+          image: langgenius/dify-api:1.1.2
           envFrom:
             - configMapRef:
                 name: dify-config
@@ -1360,7 +1360,7 @@ spec:
         kubernetes.io/os: linux
       containers:
         - name: worker
-          image: langgenius/dify-api:1.1.0
+          image: langgenius/dify-api:1.1.2
           ports:
             - containerPort: 5001
               protocol: TCP
@@ -1440,7 +1440,7 @@ spec:
       restartPolicy: Always
       containers:
       - name: web
-        image: langgenius/dify-web:1.1.0
+        image: langgenius/dify-web:1.1.2
         envFrom:
           - configMapRef:
               name: dify-config
@@ -1875,7 +1875,7 @@ spec:
       automountServiceAccountToken: false
       containers:
         - name: plugin-daemon
-          image: langgenius/dify-plugin-daemon:0.0.5-local
+          image: langgenius/dify-plugin-daemon:0.0.6-local
           envFrom:
             - configMapRef:
                 name: dify-config
