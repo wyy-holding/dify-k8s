@@ -9,8 +9,20 @@
     
 # Currently supported dify versions: V1.1.3
 
-#### upgrade
+## usage
+
+### create a kubernetes cluster
+![img.png](static/img.png)
+### Set a default storage class()
+![img.png](static/img_1.png)
+![img.png](static/img_2.png)
+### create dify cluster   
+![img.png](static/img_3.png)
+### Visit the front-end page
+![img.png](static/img_4.png)
+
+## upgrade
 
  - Modify the dify-k8s.yaml file
  - kubectl apply -f dify-k8s.yaml
- - kubectl rollout restart statefulset/deployment name -n dify
+ - kubectl rollout restart statefulset/deployment your-pod-name -n dify
