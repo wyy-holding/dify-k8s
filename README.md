@@ -26,3 +26,9 @@
  - Modify the dify-k8s.yaml file
  - kubectl apply -f dify-k8s.yaml
  - kubectl rollout restart statefulset/deployment your-pod-name -n dify
+
+## notes
+ 
+ - Please modify YAML files according to your own needs, such as changing storageClass to your own
+ - If you need to call your application's external API, simply go to the API call page and set the key. Don't forget to bring the default port 31234
+ - Almost all configuration items are converted from the official docker-compose.yaml. For example, if you need to modify it to external redistribution, just follow the official instructions.
