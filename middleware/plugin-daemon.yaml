@@ -21,7 +21,7 @@ spec:
       automountServiceAccountToken: false
       containers:
         - name: plugin-daemon
-          image: langgenius/dify-plugin-daemon:0.0.6-local
+          image: langgenius/dify-plugin-daemon:0.0.7-local
           envFrom:
             - configMapRef:
                 name: dify-config
@@ -96,7 +96,61 @@ spec:
                 configMapKeyRef:
                   name: dify-config
                   key: PIP_MIRROR_URL
-
+            - name: S3_USE_AWS_MANAGED_IAM
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_S3_USE_AWS_MANAGED_IAM
+            - name: S3_ENDPOINT
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_S3_ENDPOINT
+            - name: S3_USE_PATH_STYLE
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_S3_USE_PATH_STYLE
+            - name: AWS_ACCESS_KEY
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_AWS_ACCESS_KEY
+            - name: PAWS_SECRET_KEY
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_PAWS_SECRET_KEY
+            - name: AWS_REGION
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_AWS_REGION
+            - name: AZURE_BLOB_STORAGE_CONNECTION_STRING
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_AZURE_BLOB_STORAGE_CONNECTION_STRING
+            - name: AZURE_BLOB_STORAGE_CONTAINER_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_AZURE_BLOB_STORAGE_CONTAINER_NAME
+            - name: TENCENT_COS_SECRET_KEY
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_TENCENT_COS_SECRET_KEY
+            - name: TENCENT_COS_SECRET_ID
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_TENCENT_COS_SECRET_ID
+            - name: TENCENT_COS_REGION
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_TENCENT_COS_REGION
           ports:
             - containerPort: 5003
               protocol: TCP
