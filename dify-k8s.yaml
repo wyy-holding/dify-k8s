@@ -2000,7 +2000,7 @@ spec:
               valueFrom:
                 configMapKeyRef:
                   name: dify-config
-                  key: PLUGIN_PAWS_SECRET_KEY
+                  key: PLUGIN_AWS_SECRET_KEY
             - name: AWS_REGION
               valueFrom:
                 configMapKeyRef:
