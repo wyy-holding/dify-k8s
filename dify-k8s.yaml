@@ -488,6 +488,7 @@ data:
   ENABLE_OTEL: "false"
   OTLP_BASE_ENDPOINT: "http://localhost:4318"
   OTLP_API_KEY: ""
+  OTEL_EXPORTER_OTLP_PROTOCOL: ""
   OTEL_EXPORTER_TYPE: "otlp"
   OTEL_SAMPLING_RATE: "0.1"
   OTEL_BATCH_EXPORT_SCHEDULE_DELAY: "5000"
@@ -593,7 +594,7 @@ spec:
               command:
                 - "pg_isready"
                 - "-h"
-                - "db"
+                - "localhost"
                 - "-U"
                 - "$(PGUSER)"
                 - "-d"
@@ -1011,7 +1012,7 @@ spec:
         kubernetes.io/os: linux
       containers:
       - name: sandbox
-        image: langgenius/dify-sandbox:0.2.11
+        image: langgenius/dify-sandbox:0.2.12
         env:
           - name: API_KEY
             valueFrom:
@@ -1318,7 +1319,7 @@ spec:
         kubernetes.io/os: linux
       containers:
         - name: api
-          image: langgenius/dify-api:1.3.1
+          image: langgenius/dify-api:1.4.0
           envFrom:
             - configMapRef:
                 name: dify-config
@@ -1421,7 +1422,7 @@ spec:
         kubernetes.io/os: linux
       containers:
         - name: worker
-          image: langgenius/dify-api:1.3.1
+          image: langgenius/dify-api:1.4.0
           ports:
             - containerPort: 5001
               protocol: TCP
@@ -1501,7 +1502,7 @@ spec:
       restartPolicy: Always
       containers:
       - name: web
-        image: langgenius/dify-web:1.3.1
+        image: langgenius/dify-web:1.4.0
         envFrom:
           - configMapRef:
               name: dify-config
@@ -1936,7 +1937,7 @@ spec:
       automountServiceAccountToken: false
       containers:
         - name: plugin-daemon
-          image: langgenius/dify-plugin-daemon:0.0.9-local
+          image: langgenius/dify-plugin-daemon:0.0.10-local
           envFrom:
             - configMapRef:
                 name: dify-config
