@@ -20,7 +20,7 @@ spec:
       restartPolicy: Always
       containers:
       - name: web
-        image: langgenius/dify-web:1.2.0
+        image: langgenius/dify-web:1.4.3
         envFrom:
           - configMapRef:
               name: dify-config
@@ -33,6 +33,7 @@ spec:
         ports:
         - containerPort: 3000
         imagePullPolicy: IfNotPresent
+
 
 ---
 apiVersion: v1
@@ -49,4 +50,3 @@ spec:
   type: ClusterIP
   selector:
     app: web
----

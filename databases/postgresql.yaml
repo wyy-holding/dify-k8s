@@ -60,9 +60,30 @@ spec:
       containers:
         - name: postgres
           image: postgres:15-alpine
-          envFrom:
-          - configMapRef:
-              name: dify-config
+#          envFrom:
+#          - configMapRef:
+#              name: dify-config
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: POSTGRES_PASSWORD
+            - name: POSTGRES_DB
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: POSTGRES_DB
+            - name: PGDATA
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PGDATA
           ports:
             - containerPort: 5432
               name: postgres-port
@@ -70,8 +91,10 @@ spec:
             exec:
               command:
                 - "pg_isready"
+                - "-h"
+                - "localhost"
                 - "-U"
-                - "$(PGUSER)"
+                - "$(POSTGRES_USER)"
                 - "-d"
                 - "$(POSTGRES_DB)"
             initialDelaySeconds: 5
@@ -114,4 +137,3 @@ spec:
     protocol: TCP
     port: 5432
     targetPort: 5432
----

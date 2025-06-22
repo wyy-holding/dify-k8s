@@ -23,7 +23,7 @@ spec:
         kubernetes.io/os: linux
       containers:
         - name: api
-          image: langgenius/dify-api:1.2.0
+          image: langgenius/dify-api:1.4.3
           envFrom:
             - configMapRef:
                 name: dify-config
@@ -86,7 +86,7 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 10Gi
+      storage: 5Gi
 ---
 apiVersion: v1
 kind: Service
@@ -102,4 +102,3 @@ spec:
   type: ClusterIP
   selector:
     app: api
----

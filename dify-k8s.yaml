@@ -202,6 +202,11 @@ data:
   TIDB_VECTOR_USER: ""
   TIDB_VECTOR_PASSWORD: ""
   TIDB_VECTOR_DATABASE: "dify"
+  MATRIXONE_HOST: "matrixone"
+  MATRIXONE_PORT: "6001"
+  MATRIXONE_USER: "dump"
+  MATRIXONE_PASSWORD: "111"
+  MATRIXONE_DATABASE: "dify"
   TIDB_ON_QDRANT_URL: "http://127.0.0.1"
   TIDB_ON_QDRANT_API_KEY: "dify"
   TIDB_ON_QDRANT_CLIENT_TIMEOUT: "20"
@@ -329,6 +334,7 @@ data:
   SMTP_PASSWORD: ""
   SMTP_USE_TLS: "true"
   SMTP_OPPORTUNISTIC_TLS: "false"
+  SENDGRID_API_KEY: ""
   INDEXING_MAX_SEGMENTATION_TOKENS_LENGTH: "4000"
   INVITE_EXPIRY_HOURS: "72"
   RESET_PASSWORD_TOKEN_EXPIRY_MINUTES: "5"
@@ -361,9 +367,9 @@ data:
   LOOP_NODE_MAX_COUNT: "100"
   MAX_TOOLS_NUM: "10"
   MAX_PARALLEL_LIMIT: "10"
-  MAX_ITERATIONS_NUM: "99"
+  MAX_ITERATIONS_NUM: "5"
   TEXT_GENERATION_TIMEOUT_MS: "60000"
-  PGUSER: "postgres"
+  POSTGRES_USER: "postgres"
   POSTGRES_PASSWORD: "difyai123456"
   POSTGRES_DB: "dify"
   PGDATA: "/var/lib/postgresql/data/pgdata"
@@ -477,6 +483,7 @@ data:
   PLUGIN_PACKAGE_CACHE_PATH: "plugin_packages"
   PLUGIN_MEDIA_CACHE_PATH: "assets"
   PLUGIN_STORAGE_OSS_BUCKET: ""
+  PLUGIN_S3_USE_AWS: "false"
   PLUGIN_S3_USE_AWS_MANAGED_IAM: "false"
   PLUGIN_S3_ENDPOINT: ""
   PLUGIN_S3_USE_PATH_STYLE: "false"
@@ -494,6 +501,10 @@ data:
   PLUGIN_ALIYUN_OSS_ACCESS_KEY_SECRET: ""
   PLUGIN_ALIYUN_OSS_AUTH_VERSION: "v4"
   PLUGIN_ALIYUN_OSS_PATH: ""
+  PLUGIN_VOLCENGINE_TOS_ENDPOINT: ""
+  PLUGIN_VOLCENGINE_TOS_ACCESS_KEY: ""
+  PLUGIN_VOLCENGINE_TOS_SECRET_KEY: ""
+  PLUGIN_VOLCENGINE_TOS_REGION: ""
   ENABLE_OTEL: "false"
   OTLP_BASE_ENDPOINT: "http://localhost:4318"
   OTLP_API_KEY: ""
@@ -507,6 +518,9 @@ data:
   OTEL_BATCH_EXPORT_TIMEOUT: "10000"
   OTEL_METRIC_EXPORT_TIMEOUT: "30000"
   ALLOW_EMBED: "false"
+  QUEUE_MONITOR_THRESHOLD: "200"
+  QUEUE_MONITOR_ALERT_EMAILS: ""
+  QUEUE_MONITOR_INTERVAL: "30"
 
 ---
 apiVersion: v1
@@ -575,11 +589,11 @@ spec:
 #          - configMapRef:
 #              name: dify-config
           env:
-            - name: PGUSER
+            - name: POSTGRES_USER
               valueFrom:
                 configMapKeyRef:
                   name: dify-config
-                  key: PGUSER
+                  key: POSTGRES_USER
             - name: POSTGRES_PASSWORD
               valueFrom:
                 configMapKeyRef:
@@ -605,7 +619,7 @@ spec:
                 - "-h"
                 - "localhost"
                 - "-U"
-                - "$(PGUSER)"
+                - "$(POSTGRES_USER)"
                 - "-d"
                 - "$(POSTGRES_DB)"
             initialDelaySeconds: 5
@@ -1328,7 +1342,7 @@ spec:
         kubernetes.io/os: linux
       containers:
         - name: api
-          image: langgenius/dify-api:1.4.1
+          image: langgenius/dify-api:1.4.3
           envFrom:
             - configMapRef:
                 name: dify-config
@@ -1431,7 +1445,7 @@ spec:
         kubernetes.io/os: linux
       containers:
         - name: worker
-          image: langgenius/dify-api:1.4.1
+          image: langgenius/dify-api:1.4.3
           ports:
             - containerPort: 5001
               protocol: TCP
@@ -1511,7 +1525,7 @@ spec:
       restartPolicy: Always
       containers:
       - name: web
-        image: langgenius/dify-web:1.4.1
+        image: langgenius/dify-web:1.4.3
         envFrom:
           - configMapRef:
               name: dify-config
@@ -1946,7 +1960,7 @@ spec:
       automountServiceAccountToken: false
       containers:
         - name: plugin-daemon
-          image: langgenius/dify-plugin-daemon:0.1.1-local
+          image: langgenius/dify-plugin-daemon:0.1.2-local
           envFrom:
             - configMapRef:
                 name: dify-config
@@ -2026,6 +2040,11 @@ spec:
                 configMapKeyRef:
                   name: dify-config
                   key: PLUGIN_S3_USE_AWS_MANAGED_IAM
+            - name: S3_USE_AWS
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_S3_USE_AWS
             - name: S3_ENDPOINT
               valueFrom:
                 configMapKeyRef:
@@ -2106,6 +2125,26 @@ spec:
                 configMapKeyRef:
                   name: dify-config
                   key: PLUGIN_ALIYUN_OSS_PATH
+            - name: VOLCENGINE_TOS_ENDPOINT
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_ALIYUN_OSS_PATH
+            - name: VOLCENGINE_TOS_ACCESS_KEY
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_VOLCENGINE_TOS_ACCESS_KEY
+            - name: VOLCENGINE_TOS_SECRET_KEY
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_VOLCENGINE_TOS_SECRET_KEY
+            - name: VOLCENGINE_TOS_REGION
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_VOLCENGINE_TOS_REGION
 
           ports:
             - containerPort: 5003

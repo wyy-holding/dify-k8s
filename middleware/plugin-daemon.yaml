@@ -21,7 +21,7 @@ spec:
       automountServiceAccountToken: false
       containers:
         - name: plugin-daemon
-          image: langgenius/dify-plugin-daemon:0.0.7-local
+          image: langgenius/dify-plugin-daemon:0.1.2-local
           envFrom:
             - configMapRef:
                 name: dify-config
@@ -101,6 +101,11 @@ spec:
                 configMapKeyRef:
                   name: dify-config
                   key: PLUGIN_S3_USE_AWS_MANAGED_IAM
+            - name: S3_USE_AWS
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_S3_USE_AWS
             - name: S3_ENDPOINT
               valueFrom:
                 configMapKeyRef:
@@ -116,11 +121,11 @@ spec:
                 configMapKeyRef:
                   name: dify-config
                   key: PLUGIN_AWS_ACCESS_KEY
-            - name: PAWS_SECRET_KEY
+            - name: AWS_SECRET_KEY
               valueFrom:
                 configMapKeyRef:
                   name: dify-config
-                  key: PLUGIN_PAWS_SECRET_KEY
+                  key: PLUGIN_AWS_SECRET_KEY
             - name: AWS_REGION
               valueFrom:
                 configMapKeyRef:
@@ -151,6 +156,57 @@ spec:
                 configMapKeyRef:
                   name: dify-config
                   key: PLUGIN_TENCENT_COS_REGION
+            - name: ALIYUN_OSS_REGION
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_ALIYUN_OSS_REGION
+            - name: ALIYUN_OSS_ENDPOINT
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_ALIYUN_OSS_ENDPOINT
+            - name: ALIYUN_OSS_ACCESS_KEY_ID
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_ALIYUN_OSS_ACCESS_KEY_ID
+            - name: ALIYUN_OSS_ACCESS_KEY_SECRET
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_ALIYUN_OSS_ACCESS_KEY_SECRET
+            - name: ALIYUN_OSS_AUTH_VERSION
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_ALIYUN_OSS_AUTH_VERSION
+            - name: ALIYUN_OSS_PATH
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_ALIYUN_OSS_PATH
+            - name: VOLCENGINE_TOS_ENDPOINT
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_ALIYUN_OSS_PATH
+            - name: VOLCENGINE_TOS_ACCESS_KEY
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_VOLCENGINE_TOS_ACCESS_KEY
+            - name: VOLCENGINE_TOS_SECRET_KEY
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_VOLCENGINE_TOS_SECRET_KEY
+            - name: VOLCENGINE_TOS_REGION
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_VOLCENGINE_TOS_REGION
+
           ports:
             - containerPort: 5003
               protocol: TCP
@@ -196,4 +252,3 @@ spec:
   resources:
     requests:
       storage: 5Gi
----
