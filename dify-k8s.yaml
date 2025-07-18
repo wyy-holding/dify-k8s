@@ -86,6 +86,7 @@ data:
   REDIS_CLUSTERS: ""
   REDIS_CLUSTERS_PASSWORD: ""
   CELERY_BROKER_URL: "redis://:difyai123456@redis:6379/1"
+  CELERY_BACKEND: "redis"
   BROKER_USE_SSL: "false"
   CELERY_USE_SENTINEL: "false"
   CELERY_SENTINEL_MASTER_NAME: ""
@@ -535,7 +536,7 @@ data:
   QUEUE_MONITOR_THRESHOLD: "200"
   QUEUE_MONITOR_ALERT_EMAILS: ""
   QUEUE_MONITOR_INTERVAL: "30"
-
+  DB_SSL_MODE: "disable"
 ---
 apiVersion: v1
 kind: ServiceAccount

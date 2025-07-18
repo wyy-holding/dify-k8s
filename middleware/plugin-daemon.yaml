@@ -206,7 +206,11 @@ spec:
                 configMapKeyRef:
                   name: dify-config
                   key: PLUGIN_VOLCENGINE_TOS_REGION
-
+            - name: DB_SSL_MODE
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: DB_SSL_MODE
           ports:
             - containerPort: 5003
               protocol: TCP
