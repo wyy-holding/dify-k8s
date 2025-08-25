@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: work_beat
+  namespace: dify
+spec:
+  replicas: 1
+  revisionHistoryLimit: 1
+  selector:
+    matchLabels:
+      app: work_beat
+  template:
+    metadata:
+      labels:
+        app: work_beat
+    spec:
+      automountServiceAccountToken: false
+      restartPolicy: Always
+      containers:
+        - name: work_beat
+          image: langgenius/dify-api:1.7.2
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: dify-config
+          env:
+            - name: MODE
+              value: "beat"
+
+
+      

@@ -21,7 +21,7 @@ spec:
         kubernetes.io/os: linux
       containers:
         - name: worker
-          image: langgenius/dify-api:1.6.0
+          image: langgenius/dify-api:1.7.2
           ports:
             - containerPort: 5001
               protocol: TCP
