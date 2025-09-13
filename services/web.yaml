@@ -20,7 +20,7 @@ spec:
       restartPolicy: Always
       containers:
       - name: web
-        image: langgenius/dify-web:1.7.2
+        image: langgenius/dify-web:1.8.1
         envFrom:
           - configMapRef:
               name: dify-config

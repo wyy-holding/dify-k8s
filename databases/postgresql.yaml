@@ -90,9 +90,10 @@ spec:
           livenessProbe:
             exec:
               command:
+                - "CMD"
                 - "pg_isready"
                 - "-h"
-                - "localhost"
+                - "db"
                 - "-U"
                 - "$(POSTGRES_USER)"
                 - "-d"

@@ -359,6 +359,8 @@ data:
   API_SENTRY_TRACES_SAMPLE_RATE: "1.0"
   API_SENTRY_PROFILES_SAMPLE_RATE: "1.0"
   WEB_SENTRY_DSN: ""
+  PLUGIN_SENTRY_ENABLED: "false"
+  PLUGIN_SENTRY_DSN: ""
   NOTION_INTEGRATION_TYPE: "public"
   NOTION_CLIENT_SECRET: ""
   NOTION_CLIENT_ID: ""
@@ -377,6 +379,7 @@ data:
   INDEXING_MAX_SEGMENTATION_TOKENS_LENGTH: "4000"
   INVITE_EXPIRY_HOURS: "72"
   RESET_PASSWORD_TOKEN_EXPIRY_MINUTES: "5"
+  EMAIL_REGISTER_TOKEN_EXPIRY_MINUTES: "5"
   CHANGE_EMAIL_TOKEN_EXPIRY_MINUTES: "5"
   OWNER_TRANSFER_TOKEN_EXPIRY_MINUTES: "5"
   CODE_EXECUTION_ENDPOINT: "http://sandbox:8194"
@@ -576,6 +579,9 @@ data:
   QUEUE_MONITOR_THRESHOLD: "200"
   QUEUE_MONITOR_ALERT_EMAILS: ""
   QUEUE_MONITOR_INTERVAL: "30"
+  SWAGGER_UI_ENABLED: "true"
+  SWAGGER_UI_PATH: "/swagger-ui.html"
+  DSL_EXPORT_ENCRYPT_DATASET_ID: "true"
   DB_SSL_MODE: "disable"
   ENABLE_CLEAN_EMBEDDING_CACHE_TASK: "false"
   ENABLE_CLEAN_UNUSED_DATASETS_TASK: "false"
@@ -679,9 +685,10 @@ spec:
           livenessProbe:
             exec:
               command:
+                - "CMD"
                 - "pg_isready"
                 - "-h"
-                - "localhost"
+                - "db"
                 - "-U"
                 - "$(POSTGRES_USER)"
                 - "-d"
@@ -805,8 +812,11 @@ spec:
         livenessProbe:
           exec:
             command:
-              - redis-cli
-              - ping
+              - "CMD-SHELL"
+              - "redis-cli"
+              - "-a"
+              - "${REDIS_PASSWORD:-difyai123456}"
+              - "ping | grep -q PONG"
         volumeMounts:
           - mountPath: /data
             name: redis-data
@@ -1406,7 +1416,7 @@ spec:
         kubernetes.io/os: linux
       containers:
         - name: api
-          image: langgenius/dify-api:1.7.2
+          image: langgenius/dify-api:1.8.1
           envFrom:
             - configMapRef:
                 name: dify-config
@@ -1509,7 +1519,7 @@ spec:
         kubernetes.io/os: linux
       containers:
         - name: worker
-          image: langgenius/dify-api:1.7.2
+          image: langgenius/dify-api:1.8.1
           ports:
             - containerPort: 5001
               protocol: TCP
@@ -1589,7 +1599,7 @@ spec:
       restartPolicy: Always
       containers:
       - name: web
-        image: langgenius/dify-web:1.7.2
+        image: langgenius/dify-web:1.8.1
         envFrom:
           - configMapRef:
               name: dify-config
@@ -2209,6 +2219,16 @@ spec:
                 configMapKeyRef:
                   name: dify-config
                   key: PLUGIN_VOLCENGINE_TOS_REGION
+            - name: SENTRY_ENABLED
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_SENTRY_ENABLED
+            - name: SENTRY_DSN
+              valueFrom:
+                configMapKeyRef:
+                  name: dify-config
+                  key: PLUGIN_SENTRY_DSN
 
           ports:
             - containerPort: 5003
@@ -2276,7 +2296,7 @@ spec:
       restartPolicy: Always
       containers:
         - name: work-beat
-          image: langgenius/dify-api:1.7.2
+          image: langgenius/dify-api:1.8.1
           imagePullPolicy: IfNotPresent
           envFrom:
             - configMapRef:

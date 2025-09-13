@@ -76,8 +76,11 @@ spec:
         livenessProbe:
           exec:
             command:
-              - redis-cli
-              - ping
+              - "CMD-SHELL"
+              - "redis-cli"
+              - "-a"
+              - "${REDIS_PASSWORD:-difyai123456}"
+              - "ping | grep -q PONG"
         volumeMounts:
           - mountPath: /data
             name: redis-data

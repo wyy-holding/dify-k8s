@@ -1,24 +1,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: work_beat
+  name: work-beat
   namespace: dify
 spec:
   replicas: 1
   revisionHistoryLimit: 1
   selector:
     matchLabels:
-      app: work_beat
+      app: work-beat
   template:
     metadata:
       labels:
-        app: work_beat
+        app: work-beat
     spec:
       automountServiceAccountToken: false
       restartPolicy: Always
       containers:
-        - name: work_beat
-          image: langgenius/dify-api:1.7.2
+        - name: work-beat
+          image: langgenius/dify-api:1.8.1
           imagePullPolicy: IfNotPresent
           envFrom:
             - configMapRef:
