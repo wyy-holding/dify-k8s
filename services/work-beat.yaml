@@ -18,7 +18,7 @@ spec:
       restartPolicy: Always
       containers:
         - name: work-beat
-          image: langgenius/dify-api:1.8.1
+          image: langgenius/dify-api:1.9.0
           imagePullPolicy: IfNotPresent
           envFrom:
             - configMapRef:
