@@ -61,7 +61,7 @@ spec:
       serviceAccountName: weaviate
       containers:
         - name: weaviate
-          image: semitechnologies/weaviate:1.19.0
+          image: semitechnologies/weaviate:1.23.0
           ports:
             - containerPort: 8080
               name: weaviate-p

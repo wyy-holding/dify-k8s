@@ -7,7 +7,7 @@
 
     If you use a local database, then you need to have a storageClass.
     
-# Currently supported dify versions: V1.9.0
+# Currently supported dify versions: V1.9.2
 
 ## usage
 
