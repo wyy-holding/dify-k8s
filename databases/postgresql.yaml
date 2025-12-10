@@ -68,17 +68,17 @@ spec:
               valueFrom:
                 configMapKeyRef:
                   name: dify-config
-                  key: POSTGRES_USER
+                  key: DB_USERNAME
             - name: POSTGRES_PASSWORD
               valueFrom:
                 configMapKeyRef:
                   name: dify-config
-                  key: POSTGRES_PASSWORD
+                  key: DB_PASSWORD
             - name: POSTGRES_DB
               valueFrom:
                 configMapKeyRef:
                   name: dify-config
-                  key: POSTGRES_DB
+                  key: DB_DATABASE
             - name: PGDATA
               valueFrom:
                 configMapKeyRef:
@@ -93,11 +93,11 @@ spec:
                 - "CMD"
                 - "pg_isready"
                 - "-h"
-                - "db"
+                - "db_postgres"
                 - "-U"
-                - "$(POSTGRES_USER)"
+                - "$(DB_USERNAME)"
                 - "-d"
-                - "$(POSTGRES_DB)"
+                - "$(DB_DATABASE)"
             initialDelaySeconds: 5
             periodSeconds: 5
             timeoutSeconds: 2

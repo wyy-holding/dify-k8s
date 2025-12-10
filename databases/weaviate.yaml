@@ -123,6 +123,26 @@ spec:
               configMapKeyRef:
                 name: dify-config
                 key: WEAVIATE_AUTHORIZATION_ADMINLIST_USERS
+          - name: DISABLE_TELEMETRY
+            valueFrom:
+              configMapKeyRef:
+                key: WEAVIATE_DISABLE_TELEMETRY
+                name: dify-config
+          - name: ENABLE_TOKENIZER_GSE
+            valueFrom:
+              configMapKeyRef:
+                key: WEAVIATE_ENABLE_TOKENIZER_GSE
+                name: dify-config
+          - name: ENABLE_TOKENIZER_KAGOME_JA
+            valueFrom:
+              configMapKeyRef:
+                key: WEAVIATE_ENABLE_TOKENIZER_KAGOME_JA
+                name: dify-config
+          - name: ENABLE_TOKENIZER_KAGOME_KR
+            valueFrom:
+              configMapKeyRef:
+                key: WEAVIATE_ENABLE_TOKENIZER_KAGOME_KR
+                name: dify-config
           volumeMounts:
             - mountPath: /var/lib/weaviate
               name: weaviate-data
